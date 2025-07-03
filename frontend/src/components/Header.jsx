@@ -8,6 +8,7 @@ const Header = ({ userName = "User", onToggleSidebar, sidebarOpen }) => {
   const navigate = useNavigate();
 
   const handleLogout = () => {
+    localStorage.clear();
     alert("You have been logged out.");
     navigate("/login");
   };

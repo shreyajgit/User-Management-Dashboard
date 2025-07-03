@@ -1,9 +1,13 @@
 import React from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
-import Users from './components/registerUser';
+import Users from './components/RegisterUser';
 import Login from './components/Login'; 
-import UserData from './components/VIew'; 
-import Home from './components/Home';
+import PrivateRoute from './components/PrivateRoute';
+import Layout from './components/Layout'; // new layout wrapper
+import Dashboard from './components/Dashboard'; // create new dashboard file
+import Role from './components/Role';
+import Department from './components/Department';
+import UserData from './components/UserList';
 
 function App() {
   return (
@@ -11,9 +15,20 @@ function App() {
       <Routes>
         <Route path="/register" element={<Users />} />
         <Route path="/login" element={<Login />} />
-        {/* Optional: Add more routes like below */}
-        <Route path="/view" element={<UserData />} />
-<Route path="/home/*" element={<Home />} />
+
+        <Route
+          path="/"
+          element={
+            <PrivateRoute>
+              <Layout />
+            </PrivateRoute>
+          }
+        >
+          <Route path="dashboard" element={<Dashboard />} />
+          <Route path="userManagement/roles" element={<Role />} />
+          <Route path="userManagement/department" element={<Department />} />
+          <Route path="userManagement/userList" element={<UserData />} />
+        </Route>
       </Routes>
     </Router>
   );

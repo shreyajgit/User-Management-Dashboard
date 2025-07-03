@@ -46,7 +46,8 @@ console.log(data.data)
 
       alert("Login successful!");
       localStorage.setItem("fullname", data.data.fullName); // Save token to localStorage
-      navigate("/home");
+      localStorage.setItem("loginTime", Date.now()); // store current timestamp
+      navigate("/dashboard"); // Navigate to dashboard
       console.log("Logged in user:", data);
 
       // TODO: Save token or session and navigate to dashboard

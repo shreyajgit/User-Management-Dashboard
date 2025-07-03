@@ -1,19 +1,27 @@
+// src/components/Layout.jsx
 import React, { useState, useEffect } from 'react';
+import { Outlet, useLocation, useNavigate } from 'react-router-dom';
+import { Collapse, Nav } from 'react-bootstrap';
+import {
+  FaTachometerAlt,
+  FaUsers,
+  FaChevronDown,
+  FaChevronRight,
+  FaUserCog,
+  FaBuilding,
+  FaList
+} from 'react-icons/fa';
 import Header from './Header';
-import { Container, Row, Col, Nav, Collapse } from 'react-bootstrap';
-import { FaTachometerAlt, FaUsers, FaChevronDown, FaChevronRight, FaUserCog, FaBuilding, FaList } from 'react-icons/fa';
-import { useNavigate, useLocation, Routes, Route } from 'react-router-dom';
 import Footer from './Footer';
-import UserData from './View';
 
-const Home = () => {
+const Layout = () => {
   const [sidebarOpen, setSidebarOpen] = useState(true);
   const [userManagementOpen, setUserManagementOpen] = useState(false);
   const [activeMenuItem, setActiveMenuItem] = useState('dashboard');
 
   const fullName = localStorage.getItem('fullname') || 'User';
-  const navigate = useNavigate();
   const location = useLocation();
+  const navigate = useNavigate();
 
   const toggleSidebar = () => {
     setSidebarOpen(!sidebarOpen);
@@ -80,7 +88,7 @@ const Home = () => {
                     border: activeMenuItem === 'dashboard' ? '1px solid #bfdbfe' : '1px solid transparent',
                     fontSize: '0.9rem'
                   }}
-                  onClick={() => navigate('/home')}
+                  onClick={() => navigate('/dashboard')}
                 >
                   <FaTachometerAlt className="me-3" size={16} />
                   Dashboard
@@ -122,7 +130,7 @@ const Home = () => {
                           padding: '10px 14px',
                           fontSize: '0.85rem'
                         }}
-                        onClick={() => navigate('/home/userManagement/roles')}
+                        onClick={() => navigate('/userManagement/roles')}
                       >
                         <FaUserCog className="me-3" size={14} />
                         Roles
@@ -138,7 +146,7 @@ const Home = () => {
                           padding: '10px 14px',
                           fontSize: '0.85rem'
                         }}
-                        onClick={() => navigate('/home/userManagement/department')}
+                        onClick={() => navigate('/userManagement/department')}
                       >
                         <FaBuilding className="me-3" size={14} />
                         Department
@@ -154,7 +162,7 @@ const Home = () => {
                           padding: '10px 14px',
                           fontSize: '0.85rem'
                         }}
-                        onClick={() => navigate('/home/userManagement/userList')}
+                        onClick={() => navigate('/userManagement/userList')}
                       >
                         <FaList className="me-3" size={14} />
                         User List
@@ -173,29 +181,11 @@ const Home = () => {
             flex: 1,
             backgroundColor: '#f9fafb',
             minHeight: 'calc(100vh - 60px)',
-            overflowX: 'hidden',
-            width: 0
+            overflowX: 'hidden'
           }}
         >
           <div className="p-4">
-            <Routes>
-              <Route path="/" element={
-                <h2 style={{ color: '#059669', fontWeight: '600', fontSize: '1.5rem' }}>
-                  Welcome to your Dashboard!
-                </h2>
-              } />
-              <Route path="userManagement/roles" element={
-                <h2 style={{ color: '#2563eb', fontWeight: '600', fontSize: '1.5rem' }}>
-                  👥 Roles Management
-                </h2>
-              } />
-              <Route path="userManagement/department" element={
-                <h2 style={{ color: '#d97706', fontWeight: '600', fontSize: '1.5rem' }}>
-                  🏢 Department Management
-                </h2>
-              } />
-              <Route path="userManagement/userList" element={<UserData />} />
-            </Routes>
+            <Outlet />
           </div>
         </div>
       </div>
@@ -205,4 +195,4 @@ const Home = () => {
   );
 };
 
-export default Home;
+export default Layout;
