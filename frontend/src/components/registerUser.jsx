@@ -1,4 +1,4 @@
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { useNavigate } from "react-router-dom";
 
 function Users() {
@@ -7,6 +7,7 @@ function Users() {
     email: '',
     phone: '',
     dob: '',
+    role: '',
     address: '',
     bio: '',
     password: '',
@@ -16,6 +17,9 @@ function Users() {
     agree: false,
   });
 
+  const [roles, setRoles] = useState([]);
+  const [rolesLoading, setRolesLoading] = useState(true);
+
   const navigate = useNavigate();
 
   const emailRef = useRef(null);
@@ -23,6 +27,27 @@ function Users() {
   const passwordRef = useRef(null);
   const confirmPasswordRef = useRef(null);
   const dobRef = useRef(null);
+
+  // Fetch roles from API
+  useEffect(() => {
+    const fetchRoles = async () => {
+      try {
+        const response = await fetch("http://localhost:5000/api/get/roles");
+        if (response.ok) {
+          const data = await response.json();
+          setRoles(data.roles || []);
+        } else {
+          console.error("Failed to fetch roles");
+        }
+      } catch (error) {
+        console.error("Error fetching roles:", error);
+      } finally {
+        setRolesLoading(false);
+      }
+    };
+
+    fetchRoles();
+  }, []);
 
   const handleChange = (e) => {
     const { name, value, type, checked } = e.target;
@@ -40,6 +65,7 @@ function Users() {
       email,
       phone,
       dob,
+      role,
       password,
       confirmPassword,
       gender,
@@ -208,6 +234,27 @@ function Users() {
                 style={{ cursor: 'pointer' }}
               />
             </div>
+          
+            <div className="mb-3">
+              <label className="form-label">Role <span className="text-danger">*</span></label>
+              <select
+                className="form-select"
+                name="role"
+                value={formData.role}
+                onChange={handleChange}
+                required
+                disabled={rolesLoading}
+              >
+                <option value="">
+                  {rolesLoading ? "Loading roles..." : "Select Role"}
+                </option>
+                {roles.map((role) => (
+                  <option key={role._id} value={role.role_name}>
+                    {role.role_name}
+                  </option>
+                ))}
+              </select>
+            </div>
 
             <div className="mb-3">
               <label className="form-label">Bio</label>
@@ -236,6 +283,9 @@ function Users() {
               </label>
               <label className="form-check form-check-inline" style={{ cursor: 'pointer' }}>
                 <input className="form-check-input me-1" type="radio" name="gender" value="female" checked={formData.gender === 'female'} onChange={handleChange} /> Female
+              </label>
+              <label className="form-check form-check-inline" style={{ cursor: 'pointer' }}>
+                <input className="form-check-input me-1" type="radio" name="gender" value="Other" checked={formData.gender === 'Other'} onChange={handleChange} /> Other
               </label>
             </div>
 

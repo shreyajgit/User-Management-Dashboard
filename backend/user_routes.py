@@ -44,9 +44,10 @@ def create_user():
         user = {
             "_id": uuid.uuid4().hex,
             "fullName": user_data["fullName"],
-            "email": user_data["email"],
+            "email": user_data["email"], 
             "phone": user_data["phone"],
             "dob": user_data["dob"],
+            "role": user_data.get("role"),  
             "address": user_data.get("address", ""),
             "bio": user_data.get("bio", ""),
             "password": user_data["password"],
