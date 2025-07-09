@@ -2,10 +2,13 @@ import uuid
 from datetime import datetime
 from flask import Blueprint, request
 from flask_pymongo import PyMongo
+from pytz import timezone, utc
 
 # Blueprint for roles
 role_bp = Blueprint("role_routes", __name__)
 mongo = None  # To be set via set_db function
+
+IST = timezone("Asia/Kolkata")
 
 def set_db(db):
     global mongo
@@ -17,7 +20,7 @@ def create_role():
     data = request.json
 
     # Required fields
-    required_fields = ["role_name", "display_name", "permissions", "created_by", "updated_by"]
+    required_fields = ["role_name", "role_display_name", "permissions", "created_by", "updated_by"]
 
     for field in required_fields:
         if field not in data:
@@ -29,7 +32,7 @@ def create_role():
     role = {
         "_id": uuid.uuid4().hex,
         "role_name": data["role_name"],
-        "display_name": data["display_name"].strip().replace(" ", "_").lower(),
+        "role_display_name": data["role_display_name"].strip().replace(" ", "_").upper(),
         "permissions": data["permissions"],  # Array of objects
         "created_on": datetime.utcnow(),
         "created_by": data["created_by"],
@@ -39,17 +42,22 @@ def create_role():
     }
 
     # Check if role already exists
-    existing = mongo.db.roles.find_one({
-        "display_name": role["display_name"],
-         "status": {"$ne": "inactive"}  # Only block if existing role is NOT inactive
-   })
-    if existing:
-        return {"message": f"Role '{role['display_name']}' already exists"}, 409
-
+    duplicate_role = mongo.db.roles.find_one({
+        "role_name": role["role_name"].strip(),
+        "status": {"$ne": "inactive"}  # Only block if existing role is NOT inactive
+    })
+    if duplicate_role:
+        return {"message": f"Role '{role['role_name']}' already exists"}, 409
+    
+    duplicate_display = mongo.db.roles.find_one({
+        "role_display_name": role["role_display_name"],
+        "status": {"$ne": "inactive"}  # Only block if existing role is NOT inactive
+    })
+    if duplicate_display:
+        return {"message": f"Role '{role['role_display_name']}' already exists"}, 409
 
     mongo.db.roles.insert_one(role)
     return {"message": "Role created successfully"}, 201
-
 
 # UPDATE ROLE
 @role_bp.route("/update/role/<role_id>", methods=["PUT"])
@@ -57,27 +65,27 @@ def update_role(role_id):
     data = request.json
 
     # Fields that can be updated
-    updatable_fields = ["role_name", "display_name", "permissions", "updated_by"]
+    updatable_fields = ["role_name", "role_display_name", "permissions", "updated_by"]
 
     update_data = {}
     for field in updatable_fields:
         if field in data:
-            if field == "display_name":
-                update_data[field] = data[field].strip().replace(" ", "_").lower()
+            if field == "role_display_name":
+                update_data[field] = data[field].strip().replace(" ", "_").upper()
             else:
                 update_data[field] = data[field]
 
     if "permissions" in update_data and not isinstance(update_data["permissions"], list):
         return {"message": "Permissions must be an array of objects"}, 400
 
-    # Prevent duplicate display_name
-    if "display_name" in update_data:
+    # Prevent duplicate role_display_name
+    if "role_display_name" in update_data:
         existing = mongo.db.roles.find_one({
-            "display_name": update_data["display_name"],
+            "role_display_name": update_data["role_display_name"],
             "_id": {"$ne": role_id}  # Exclude the current role from duplicate check
         })
         if existing:
-            return {"message": f"Role '{update_data['display_name']}' already exists"}, 409
+            return {"message": f"Role '{update_data['role_display_name']}' already exists"}, 409
 
     update_data["updated_on"] = datetime.utcnow()
 
@@ -88,7 +96,7 @@ def update_role(role_id):
 
     return {"message": "Role updated successfully"}, 200
 
-
+# READ ROLES
 @role_bp.route("/get/roles", methods=["GET"])
 def get_all_roles():
     # Only fetch roles that are not marked as inactive
@@ -98,16 +106,25 @@ def get_all_roles():
             {"status": {"$exists": False}}    # Or status doesn't exist (for old data)
         ]
     })
-    
+
     roles = []
     for role in roles_cursor:
         role["_id"] = str(role["_id"])  # Convert ObjectId/UUID to string
-        role["created_on"] = role["created_on"].strftime("%Y-%m-%d %H:%M:%S")
-        role["updated_on"] = role["updated_on"].strftime("%Y-%m-%d %H:%M:%S")
+        
+        # Convert UTC to IST
+        created_utc = role["created_on"].replace(tzinfo=utc)
+        updated_utc = role["updated_on"].replace(tzinfo=utc)
+
+        created_ist = created_utc.astimezone(IST)
+        updated_ist = updated_utc.astimezone(IST)
+        
+        # Format the IST times (not UTC times)
+        role["created_on"] = created_ist.strftime("%Y-%m-%d %H:%M:%S")
+        role["updated_on"] = updated_ist.strftime("%Y-%m-%d %H:%M:%S")
+        
         roles.append(role)
 
     return {"roles": roles}, 200
-
 
 
 # DELETE (Soft) ROLE

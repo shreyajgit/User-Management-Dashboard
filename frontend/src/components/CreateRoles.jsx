@@ -5,7 +5,7 @@ import { useNavigate } from "react-router-dom";
 const CreateRoles = () => {
   const [roleData, setRoleData] = useState({
     role_name: "",
-    display_name: "",
+    role_display_name: "",
     permissions: [{ read: false, write: false }],
     created_by: "",
     updated_by: "",
@@ -28,26 +28,24 @@ const CreateRoles = () => {
   }, []);
 
   const handleChange = (e) => {
-  const { name, value } = e.target;
+    const { name, value } = e.target;
 
-  if (name === "role_name") {
-    const generatedDisplayName = value.trim().replace(/\s+/g, "_").toLowerCase();
+    if (name === "role_name") {
+      const generatedDisplayName = value.trim().replace(/\s+/g, "_").toLowerCase();
+      setRoleData((prev) => ({
+        ...prev,
+        role_name: value,
+        role_display_name: generatedDisplayName, // auto-set role_display_name
+      }));
+    } else {
+      setRoleData((prev) => ({
+        ...prev,
+        [name]: value,
+      }));
+    }
 
-    setRoleData((prev) => ({
-      ...prev,
-      role_name: value,
-      display_name: generatedDisplayName, // auto-set display_name
-    }));
-  } else {
-    setRoleData((prev) => ({
-      ...prev,
-      [name]: value,
-    }));
-  }
-
-  if (error) setError("");
-};
-
+    if (error) setError("");
+  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -170,42 +168,6 @@ const CreateRoles = () => {
             />
           </div>
 
-          {/* Display Name */}
-          <div>
-            <label
-              style={{
-                display: "block",
-                fontSize: "0.875rem",
-                fontWeight: "500",
-                color: "#374151",
-                marginBottom: "0.5rem",
-              }}
-            >
-              Display Name *
-            </label>
-            <input
-              type="text"
-              name="display_name"
-              value={roleData.display_name}
-              readOnly
-              onChange={handleChange}
-              required
-              placeholder="Enter display name (e.g., Administrator, Content Editor)"
-              style={{
-                width: "100%",
-                padding: "0.75rem",
-                border: "1px solid #d1d5db",
-                borderRadius: "8px",
-                fontSize: "1rem",
-                transition: "border-color 0.2s ease",
-                outline: "none",
-                backgroundColor: "#ffffff",
-              }}
-              // onFocus={(e) => (e.target.style.borderColor = "#3b82f6")}
-              // onBlur={(e) => (e.target.style.borderColor = "#d1d5db")}
-            />
-          </div>
-
           {/* Permissions */}
           <div>
             <label
@@ -221,7 +183,7 @@ const CreateRoles = () => {
             </label>
             <textarea
               name="permissions"
-              value={roleData.permissions}
+              value={JSON.stringify(roleData.permissions)}
               onChange={handleChange}
               placeholder="Describe the permissions and access levels for this role (optional)"
               rows="4"

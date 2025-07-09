@@ -608,8 +608,8 @@ const UserData = () => {
                           >
                             <option value="">Select Role</option>
                             {availableRoles.map((role) => (
-                              <option key={role._id} value={role.role_name}>
-                                {role.role_name}
+                              <option key={role._id} value={role.role_display_name}>
+                                {role.role_display_name}
                               </option>
                             ))}
                           </select>

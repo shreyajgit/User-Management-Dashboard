@@ -1,3 +1,4 @@
+// Role.jsx
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import {
@@ -8,7 +9,7 @@ import {
   FaTrash,
   FaSave,
   FaTimes,
-  FaShieldAlt, // Added for the count card icon
+  FaShieldAlt,
 } from "react-icons/fa";
 
 const Role = () => {
@@ -38,6 +39,7 @@ const Role = () => {
     setEditingRoleId(roleId);
     setEditedData({
       role_name: roleToEdit.role_name,
+      role_display_name: roleToEdit.role_display_name,
       permissions: JSON.parse(JSON.stringify(roleToEdit.permissions)),
     });
   };
@@ -55,8 +57,9 @@ const Role = () => {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           role_name: editedData.role_name,
+          role_display_name: editedData.role_display_name,
           permissions: editedData.permissions,
-          updated_by: currentUser, // change if dynamic user
+          updated_by: currentUser,
         }),
       });
 
@@ -116,24 +119,20 @@ const Role = () => {
     getRoles();
   }, []);
 
-  // Updated formatDate function to return separate date and time
   const formatDateTime = (dateStr) => {
     if (!dateStr) return { date: "N/A", time: "N/A" };
     const date = new Date(dateStr);
-    
     const dateOnly = date.toLocaleDateString("en-US", {
       year: "numeric",
       month: "short",
       day: "numeric",
     });
-    
     const timeOnly = date.toLocaleTimeString("en-US", {
       hour: "2-digit",
       minute: "2-digit",
       second: "2-digit",
       hour12: true,
     });
-    
     return { date: dateOnly, time: timeOnly };
   };
 
@@ -190,7 +189,7 @@ const Role = () => {
         </button>
       </div>
 
-      {/* Total Roles Card */}
+      {/* Role Summary */}
       {roles.length > 0 && (
         <div
           className="mb-4 p-3 d-flex align-items-center gap-3"
@@ -236,12 +235,11 @@ const Role = () => {
           overflowX: "auto",
         }}
       >
-        <table className="table table-hover mb-0" style={{ minWidth: 1250 }}>
+        <table className="table table-hover mb-0" style={{ minWidth: 1150 }}>
           <thead>
             <tr style={{ backgroundColor: "#f8fafc", borderBottom: "2px solid #e2e8f0" }}>
               <th>Actions</th>
-              <th>Role Name</th>
-              <th>Display Name</th>
+              <th>Role Display Name</th>
               <th>Permissions</th>
               <th>Created By</th>
               <th>Created On</th>
@@ -254,7 +252,7 @@ const Role = () => {
               const isEditing = editingRoleId === r._id;
               const createdDateTime = formatDateTime(r.created_on);
               const updatedDateTime = formatDateTime(r.updated_on);
-              
+
               return (
                 <tr key={r._id}>
                   <td style={{ padding: "16px 20px" }}>
@@ -329,22 +327,24 @@ const Role = () => {
                     </div>
                   </td>
 
-                  <td style={{ padding: "16px 20px", fontWeight: 500 }}>
-                    {isEditing ? (
-                      <input
-                        type="text"
-                        className="form-control form-control-sm"
-                        value={editedData.role_name}
-                        onChange={(e) =>
-                          setEditedData({ ...editedData, role_name: e.target.value })
-                        }
-                      />
-                    ) : (
-                      r.role_name
-                    )}
-                  </td>
+                  {/* ✅ Updated field */}
+                  <td style={{ padding: "16px 20px" }}>
+  {isEditing ? (
+    <input
+      type="text"
+      className="form-control form-control-sm"
+      value={editedData.role_display_name}
+      onChange={(e) =>
+        setEditedData({ ...editedData, role_display_name: e.target.value })
+      }
+    />
+  ) : (
+    r.role_display_name
+  )}
+</td>
 
-                  <td style={{ padding: "16px 20px" }}>{r.display_name}</td>
+
+
 
                   <td style={{ padding: "16px 20px", maxWidth: 300 }}>
                     {isEditing ? (
@@ -352,10 +352,7 @@ const Role = () => {
                         {editedData.permissions.map((perm, i) => (
                           <div key={i}>
                             {Object.entries(perm).map(([key, value], j) => (
-                              <div
-                                key={j}
-                                style={{ display: "flex", gap: "10px", marginBottom: 6 }}
-                              >
+                              <div key={j} style={{ display: "flex", gap: "10px", marginBottom: 6 }}>
                                 <input
                                   type="text"
                                   value={key}
@@ -395,13 +392,7 @@ const Role = () => {
                     ) : r.permissions.length === 0 ? (
                       <span style={{ color: "#9ca3af" }}>No Permissions</span>
                     ) : (
-                      <div
-                        style={{
-                          display: "grid",
-                          rowGap: "6px",
-                          fontSize: "0.85rem",
-                        }}
-                      >
+                      <div style={{ display: "grid", rowGap: "6px", fontSize: "0.85rem" }}>
                         {r.permissions.map((perm, i) => (
                           <div key={i}>
                             {Object.entries(perm).map(([key, value], j) => (
@@ -456,7 +447,6 @@ const Role = () => {
         </table>
       </div>
 
-      {/* Floating + Button */}
       <button
         onClick={() => navigate("/userManagement/roles/createRoles")}
         title="Create New Role"
@@ -479,7 +469,7 @@ const Role = () => {
         }}
         onMouseEnter={(e) => (e.currentTarget.style.transform = "scale(1.08)")}
         onMouseLeave={(e) => (e.currentTarget.style.transform = "scale(1)")}
-      > 
+      >
         +
       </button>
     </div>

@@ -249,8 +249,8 @@ function Users() {
                   {rolesLoading ? "Loading roles..." : "Select Role"}
                 </option>
                 {roles.map((role) => (
-                  <option key={role._id} value={role.role_name}>
-                    {role.role_name}
+                  <option key={role._id} value={role.role_display_name}>
+                    {role.role_display_name}
                   </option>
                 ))}
               </select>
