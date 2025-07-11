@@ -80,12 +80,21 @@ def update_role(role_id):
 
     # Prevent duplicate role_display_name
     if "role_display_name" in update_data:
+        cleaned_display_name = update_data["role_display_name"].strip()
+        if not cleaned_display_name:
+           return {"message": "Role display name cannot be empty"}, 400
+
+        cleaned_display_name = cleaned_display_name.replace(" ", "_").upper()
+        update_data["role_display_name"] = cleaned_display_name
+
         existing = mongo.db.roles.find_one({
-            "role_display_name": update_data["role_display_name"],
-            "_id": {"$ne": role_id}  # Exclude the current role from duplicate check
+            "role_display_name": cleaned_display_name,
+            "status": {"$ne": "inactive"},
+            "_id": {"$ne": role_id}
         })
         if existing:
-            return {"message": f"Role '{update_data['role_display_name']}' already exists"}, 409
+              return {"message": f"Role '{cleaned_display_name}' already exists"}, 409
+
 
     update_data["updated_on"] = datetime.utcnow()
 

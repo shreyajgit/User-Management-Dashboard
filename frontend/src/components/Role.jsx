@@ -1,16 +1,6 @@
-// Role.jsx
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import {
-  FaUserShield,
-  FaSpinner,
-  FaEye,
-  FaEdit,
-  FaTrash,
-  FaSave,
-  FaTimes,
-  FaShieldAlt,
-} from "react-icons/fa";
+import {FaUserShield,FaSpinner,FaEye,FaEdit,FaTrash,FaSave,FaTimes,FaShieldAlt,} from "react-icons/fa";
 
 const Role = () => {
   const [roles, setRoles] = useState([]);
@@ -38,7 +28,7 @@ const Role = () => {
     const roleToEdit = roles.find((r) => r._id === roleId);
     setEditingRoleId(roleId);
     setEditedData({
-      role_name: roleToEdit.role_name,
+      // role_name: roleToEdit.role_name,
       role_display_name: roleToEdit.role_display_name,
       permissions: JSON.parse(JSON.stringify(roleToEdit.permissions)),
     });
@@ -103,18 +93,9 @@ const Role = () => {
   };
 
   const actionBtnStyle = {
-    borderRadius: "8px",
-    padding: "8px 12px",
-    fontSize: "0.75rem",
-    cursor: "pointer",
-    transition: "all 0.2s ease",
-    display: "flex",
-    alignItems: "center",
-    justifyContent: "center",
-    boxShadow: "0 1px 2px rgba(0,0,0,0.05)",
-    border: "none",
+    borderRadius: "8px",padding: "8px 12px",fontSize: "0.75rem",cursor: "pointer",transition: "all 0.2s ease",
+    display: "flex",alignItems: "center",justifyContent: "center",boxShadow: "0 1px 2px rgba(0,0,0,0.05)",border: "none",
   };
-
   useEffect(() => {
     getRoles();
   }, []);
@@ -143,15 +124,10 @@ const Role = () => {
         <div className="d-flex align-items-center gap-3">
           <div
             style={{
-              width: 48,
-              height: 48,
-              backgroundColor: "#3b82f6",
-              borderRadius: 12,
-              color: "white",
+              width: 48,height: 48,backgroundColor: "#3b82f6",borderRadius: 12,color: "white",
             }}
             className="d-flex align-items-center justify-content-center"
-          >
-            <FaUserShield size={24} />
+          ><FaUserShield size={24} />
           </div>
           <div>
             <h2 className="mb-1" style={{ color: "#1f2937", fontWeight: 700 }}>
@@ -167,24 +143,11 @@ const Role = () => {
           onClick={getRoles}
           disabled={loading}
           style={{
-            backgroundColor: "#10b981",
-            color: "white",
-            borderRadius: 10,
-            padding: "12px 24px",
-            fontWeight: 600,
-            fontSize: "0.9rem",
-            boxShadow: "0 2px 4px rgba(16,185,129,0.2)",
-          }}
-        >
+            backgroundColor: "#10b981",color: "white",borderRadius: 10,padding: "12px 24px",fontWeight: 600,fontSize: "0.9rem",boxShadow: "0 2px 4px rgba(16,185,129,0.2)",
+          }}>
           {loading ? (
-            <>
-              <FaSpinner className="spinner-border spinner-border-sm" />
-              Loading...
-            </>
-          ) : (
-            <>
-              <FaEye size={16} /> Load Roles
-            </>
+            <><FaSpinner className="spinner-border spinner-border-sm" />Loading...</>
+          ) : (<><FaEye size={16} /> Load Roles</>
           )}
         </button>
       </div>
@@ -194,21 +157,13 @@ const Role = () => {
         <div
           className="mb-4 p-3 d-flex align-items-center gap-3"
           style={{
-            backgroundColor: "#f0f9ff",
-            border: "1px solid #bae6fd",
-            borderRadius: 12,
-          }}
-        >
+            backgroundColor: "#f0f9ff",border: "1px solid #bae6fd",borderRadius: 12,
+          }}>
           <div
             style={{
-              width: 40,
-              height: 40,
-              backgroundColor: "#0ea5e9",
-              borderRadius: 8,
-              color: "white",
+              width: 40,height: 40,backgroundColor: "#0ea5e9",borderRadius: 8,color: "white",
             }}
-            className="d-flex align-items-center justify-content-center"
-          >
+            className="d-flex align-items-center justify-content-center">
             <FaShieldAlt size={18} />
           </div>
           <div>
@@ -217,8 +172,7 @@ const Role = () => {
             </h6>
             <p
               className="mb-0"
-              style={{ color: "#075985", fontSize: "1.25rem", fontWeight: 700 }}
-            >
+              style={{ color: "#075985", fontSize: "1.25rem", fontWeight: 700 }}>
               {roles.length}
             </p>
           </div>
@@ -228,13 +182,8 @@ const Role = () => {
       {/* Table */}
       <div
         style={{
-          backgroundColor: "white",
-          borderRadius: 16,
-          boxShadow: "0 4px 6px -1px rgba(0,0,0,0.1)",
-          border: "1px solid #e5e7eb",
-          overflowX: "auto",
-        }}
-      >
+          backgroundColor: "white",borderRadius: 16,boxShadow: "0 4px 6px -1px rgba(0,0,0,0.1)",border: "1px solid #e5e7eb", overflowX: "auto",
+        }}>
         <table className="table table-hover mb-0" style={{ minWidth: 1150 }}>
           <thead>
             <tr style={{ backgroundColor: "#f8fafc", borderBottom: "2px solid #e2e8f0" }}>
@@ -262,27 +211,18 @@ const Role = () => {
                           <button
                             onClick={() => handleSaveEdit(r._id)}
                             style={{
-                              ...actionBtnStyle,
-                              backgroundColor: "#ecfdf5",
-                              color: "#047857",
-                              border: "1px solid #a7f3d0",
-                              gap: 6,
-                            }}
-                            title="Save"
-                          >
+                              ...actionBtnStyle,backgroundColor: "#ecfdf5",color: "#047857",border: "1px solid #a7f3d0",
+                              gap: 6, }}
+                            title="Save">
                             <FaSave size={14} />
                             <span style={{ fontSize: "0.75rem", fontWeight: 600 }}>Save</span>
                           </button>
                           <button
                             onClick={handleCancelEdit}
                             style={{
-                              ...actionBtnStyle,
-                              backgroundColor: "#fef2f2",
-                              color: "#dc2626",
-                              border: "1px solid #fecaca",
+                              ...actionBtnStyle,backgroundColor: "#fef2f2",color: "#dc2626",border: "1px solid #fecaca",
                             }}
-                            title="Cancel"
-                          >
+                            title="Cancel">
                             <FaTimes size={14} />
                           </button>
                         </>
@@ -291,10 +231,7 @@ const Role = () => {
                           <button
                             onClick={() => handleEdit(r._id)}
                             style={{
-                              ...actionBtnStyle,
-                              backgroundColor: "#f8fafc",
-                              color: "#059669",
-                              border: "1px solid #d1fae5",
+                              ...actionBtnStyle,backgroundColor: "#f8fafc",color: "#059669",border: "1px solid #d1fae5",
                             }}
                             title="Edit Role"
                           >
@@ -304,21 +241,15 @@ const Role = () => {
                             onClick={() => handleDelete(r._id, r.role_name)}
                             disabled={deleting === r._id}
                             style={{
-                              ...actionBtnStyle,
-                              backgroundColor: "#fef2f2",
-                              color: "#dc2626",
-                              border: "1px solid #fecaca",
-                              cursor: deleting === r._id ? "not-allowed" : "pointer",
-                              opacity: deleting === r._id ? 0.6 : 1,
+                              ...actionBtnStyle,backgroundColor: "#fef2f2",color: "#dc2626",border: "1px solid #fecaca",
+                              cursor: deleting === r._id ? "not-allowed" : "pointer",opacity: deleting === r._id ? 0.6 : 1,
                             }}
-                            title="Delete Role"
-                          >
+                            title="Delete Role">
                             {deleting === r._id ? (
                               <FaSpinner
                                 className="spinner-border spinner-border-sm"
                                 style={{ width: 14, height: 14 }}
-                              />
-                            ) : (
+                              />) : (
                               <FaTrash size={14} />
                             )}
                           </button>
@@ -342,9 +273,6 @@ const Role = () => {
     r.role_display_name
   )}
 </td>
-
-
-
 
                   <td style={{ padding: "16px 20px", maxWidth: 300 }}>
                     {isEditing ? (
@@ -399,11 +327,8 @@ const Role = () => {
                               <div
                                 key={j}
                                 style={{
-                                  display: "flex",
-                                  justifyContent: "space-between",
-                                  borderBottom: "1px dotted #e5e7eb",
-                                  paddingBottom: 2,
-                                  marginBottom: 4,
+                                  display: "flex",justifyContent: "space-between",borderBottom: "1px dotted #e5e7eb",
+                                  paddingBottom: 2,marginBottom: 4,
                                 }}
                               >
                                 <span style={{ fontWeight: 500 }}>{key}</span>
@@ -451,29 +376,14 @@ const Role = () => {
         onClick={() => navigate("/userManagement/roles/createRoles")}
         title="Create New Role"
         style={{
-          position: "fixed",
-          bottom: 30,
-          right: 30,
-          width: 60,
-          height: 60,
-          borderRadius: "50%",
-          backgroundColor: "#3b82f6",
-          color: "white",
-          fontSize: "2rem",
-          fontWeight: "bold",
-          border: "none",
-          boxShadow: "0 4px 12px rgba(0, 0, 0, 0.2)",
-          cursor: "pointer",
-          zIndex: 999,
-          transition: "all 0.2s ease-in-out",
+          position: "fixed",bottom: 30,right: 30,width: 60,height: 60,borderRadius: "50%",backgroundColor: "#3b82f6",
+          color: "white",fontSize: "2rem",fontWeight: "bold",border: "none",boxShadow: "0 4px 12px rgba(0, 0, 0, 0.2)",
+          cursor: "pointer",zIndex: 999,transition: "all 0.2s ease-in-out",
         }}
         onMouseEnter={(e) => (e.currentTarget.style.transform = "scale(1.08)")}
         onMouseLeave={(e) => (e.currentTarget.style.transform = "scale(1)")}
-      >
-        +
-      </button>
-    </div>
+      > +
+      </button></div>
   );
 };
-
 export default Role;

@@ -33,12 +33,19 @@ def create_department():
         "status": "active"
     }
 
-    # Check if department already exists
-    existing = mongo.db.departments.find_one({
+# Check if department already exists
+    existing_name = mongo.db.departments.find_one({
+        "department_name": department["department_name"],
+        "status": {"$ne": "inactive"}
+    })
+    if existing_name:
+        return {"message": f"Department '{department['department_name']}' already exists"}, 409
+   
+    existing_display = mongo.db.departments.find_one({
         "display_name": department["display_name"],
         "status": {"$ne": "inactive"}
     })
-    if existing:
+    if existing_display:
         return {"message": f"Department '{department['display_name']}' already exists"}, 409
 
     mongo.db.departments.insert_one(department)
@@ -93,9 +100,13 @@ def update_department(department_id):
 
     update_data["updated_on"] = datetime.utcnow()
 
+    # Only match active departments
     result = mongo.db.departments.update_one(
-        {"_id": department_id},
-        {"$set": update_data}
+        {"_id": department_id, "status": {"$ne": "inactive"}},
+        {"$set": {
+            "status": "inactive",
+            "updated_on": datetime.utcnow()
+        }}
     )
 
     if result.matched_count == 0:
@@ -109,7 +120,7 @@ def update_department(department_id):
 def soft_delete_department(department_id):
     # Set status to 'inactive' instead of deleting the document
     result = mongo.db.departments.update_one(
-        {"_id": department_id},
+        {"_id": department_id, "status": {"$ne": "inactive"}},
         {"$set": {
             "status": "inactive",
             "updated_on": datetime.utcnow()
@@ -119,4 +130,4 @@ def soft_delete_department(department_id):
     if result.matched_count == 0:
         return {"message": "Department not found"}, 404
 
-    return {"message": "Department marked as inactive"}, 200
+    return {"message": "Department has been deleted"}, 200

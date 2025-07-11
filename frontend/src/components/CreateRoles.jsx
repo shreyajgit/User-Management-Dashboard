@@ -16,6 +16,8 @@ const CreateRoles = () => {
   const [isLoading, setIsLoading] = useState(false);
   const navigate = useNavigate();
 
+  const permissionOptions = ["read", "write", "delete", "manage"];
+
   useEffect(() => {
     const fullName = localStorage.getItem("fullname");
     if (fullName) {
@@ -35,7 +37,7 @@ const CreateRoles = () => {
       setRoleData((prev) => ({
         ...prev,
         role_name: value,
-        role_display_name: generatedDisplayName, // auto-set role_display_name
+        role_display_name: generatedDisplayName,
       }));
     } else {
       setRoleData((prev) => ({
@@ -63,9 +65,7 @@ const CreateRoles = () => {
 
       const res = await fetch("http://localhost:5000/api/create/role", {
         method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           ...roleData,
           permissions: nonEmptyPermissions,
@@ -108,7 +108,6 @@ const CreateRoles = () => {
         boxShadow: "0 1px 3px rgba(0, 0, 0, 0.1)",
       }}
     >
-      {/* Header */}
       <div style={{ marginBottom: "2rem" }}>
         <h2
           style={{
@@ -159,7 +158,6 @@ const CreateRoles = () => {
                 border: "1px solid #d1d5db",
                 borderRadius: "8px",
                 fontSize: "1rem",
-                transition: "border-color 0.2s ease",
                 outline: "none",
                 backgroundColor: "#ffffff",
               }}
@@ -181,26 +179,32 @@ const CreateRoles = () => {
             >
               Permissions
             </label>
-            <textarea
-              name="permissions"
-              value={JSON.stringify(roleData.permissions)}
-              onChange={handleChange}
-              placeholder="Describe the permissions and access levels for this role (optional)"
-              rows="4"
-              style={{
-                width: "100%",
-                padding: "0.75rem",
-                border: "1px solid #d1d5db",
-                borderRadius: "8px",
-                fontSize: "1rem",
-                transition: "border-color 0.2s ease",
-                outline: "none",
-                backgroundColor: "#ffffff",
-                resize: "vertical",
-              }}
-              onFocus={(e) => (e.target.style.borderColor = "#3b82f6")}
-              onBlur={(e) => (e.target.style.borderColor = "#d1d5db")}
-            />
+            <div style={{ display: "flex", gap: "1rem", flexWrap: "wrap" }}>
+              {permissionOptions.map((perm) => (
+                <label
+                  key={perm}
+                  style={{ display: "flex", alignItems: "center", gap: "0.4rem",cursor: "pointer" }}
+                >
+                  <input
+                    type="checkbox"
+                    style={{ cursor: "pointer" }}
+                    checked={roleData.permissions[0][perm] || false}
+                    onChange={(e) =>
+                      setRoleData((prev) => ({
+                        ...prev,
+                        permissions: [
+                          {
+                            ...prev.permissions[0],
+                            [perm]: e.target.checked,
+                          },
+                        ],
+                      }))
+                    }
+                  />
+                  {perm.charAt(0).toUpperCase() + perm.slice(1)}
+                </label>
+              ))}
+            </div>
           </div>
         </div>
 
@@ -221,7 +225,6 @@ const CreateRoles = () => {
             ✅ {message}
           </div>
         )}
-
         {error && (
           <div
             style={{
@@ -262,7 +265,6 @@ const CreateRoles = () => {
               fontSize: "0.875rem",
               fontWeight: "500",
               cursor: "pointer",
-              transition: "all 0.2s ease",
               outline: "none",
             }}
             onMouseEnter={(e) => {
@@ -289,21 +291,16 @@ const CreateRoles = () => {
               fontSize: "0.875rem",
               fontWeight: "500",
               cursor: isLoading ? "not-allowed" : "pointer",
-              transition: "all 0.2s ease",
               outline: "none",
               display: "flex",
               alignItems: "center",
               gap: "0.5rem",
             }}
             onMouseEnter={(e) => {
-              if (!isLoading) {
-                e.target.style.backgroundColor = "#2563eb";
-              }
+              if (!isLoading) e.target.style.backgroundColor = "#2563eb";
             }}
             onMouseLeave={(e) => {
-              if (!isLoading) {
-                e.target.style.backgroundColor = "#3b82f6";
-              }
+              if (!isLoading) e.target.style.backgroundColor = "#3b82f6";
             }}
           >
             {isLoading ? (
@@ -327,7 +324,7 @@ const CreateRoles = () => {
         </div>
       </form>
 
-      {/* Add spinning animation */}
+      {/* Spinner Animation */}
       <style>
         {`
           @keyframes spin {

@@ -27,6 +27,8 @@ function Users() {
   const passwordRef = useRef(null);
   const confirmPasswordRef = useRef(null);
   const dobRef = useRef(null);
+  const addressRef = useRef(null);
+
 
   // Fetch roles from API
   useEffect(() => {
@@ -114,10 +116,12 @@ function Users() {
       !confirmPassword ||
       !gender ||
       !country ||
-      !agree
+      !agree ||
+      !formData.address
     ) {
-      alert("Please fill all mandatory fields and accept terms.");
-      return;
+       alert("Please fill all mandatory fields and accept terms.");
+  if (!formData.address) addressRef.current.focus();
+  return;
     }
 
     if (!emailRegex.test(email)) {
@@ -262,9 +266,18 @@ function Users() {
             </div>
 
             <div className="mb-3">
-              <label className="form-label">Address</label>
-              <textarea className="form-control" name="address" rows="2" value={formData.address} onChange={handleChange}></textarea>
-            </div>
+  <label className="form-label">Address <span className="text-danger">*</span></label>
+  <textarea
+    ref={addressRef}
+    className="form-control"
+    name="address"
+    rows="2"
+    value={formData.address}
+    onChange={handleChange}
+    required
+  ></textarea>
+</div>
+
 
             <div className="mb-3">
               <label className="form-label">Password <span className="text-danger">*</span></label>

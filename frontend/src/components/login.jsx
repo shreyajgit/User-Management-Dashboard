@@ -49,7 +49,6 @@ console.log(data.data)
       localStorage.setItem("loginTime", Date.now()); // store current timestamp
       navigate("/dashboard"); // Navigate to dashboard
       console.log("Logged in user:", data);
-
       // TODO: Save token or session and navigate to dashboard
     } catch (err) {
       console.error("Login error:", err.message);
